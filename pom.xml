@@ -10,7 +10,7 @@
     <relativePath/>
   </parent>
 
-  <groupId>org.camunda.bpm.extension</groupId>
+  <groupId>io.holunda.testing</groupId>
   <artifactId>camunda-bpm-assert-root</artifactId>
   <version>2.0-SNAPSHOT</version>
 
@@ -23,16 +23,8 @@
   </modules>
 
   <properties>
-
     <camunda-bpm.version>7.9.0</camunda-bpm.version>
-
-    <!--
-        Camunda BPM Assert simply works - with all released versions of
-        Camunda BPM Platform, just use it with the version you need!
-    -->
-
     <camunda-bpm-assert.version>${project.version}</camunda-bpm-assert.version>
-
     <version.slf4j>1.7.25</version.slf4j>
     <version.guava>18.0</version.guava>
     <version.commons-lang3>3.1</version.commons-lang3>
@@ -44,7 +36,6 @@
     <maven.compiler.target>1.8</maven.compiler.target>
 
     <!-- test tools -->
-
     <version.mockito>2.23.4</version.mockito>
     <version.powermock>2.0.0-RC.4</version.powermock>
     <version.junit>4.12</version.junit>

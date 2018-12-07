@@ -13,11 +13,41 @@ Furthermore a set of static helper methods is provided to make it easier to driv
 complete(task(instance), withVariables("approved", true));
 ```
 
-<img src="http://camunda.github.io/camunda-bpm-assert/resources/images/spaghetti-test.jpg" align="left" width="400"><br/>The goal? More **readable code** - less **spaghetti tests**!<br/>The increased readability will make it much easier to dig through your test code, the next time you need to change it will ultimately come. And your increased efficiency will make your organisational stakeholders happy, too! :smile:<br/></img>
+<img src="http://camunda.github.io/camunda-bpm-assert/resources/images/spaghetti-test.jpg" align="left" width="400"><br/>The goal? More **readable code** - less **spaghetti tests**!<br/>The increased readability will make it much easier to dig through your test code, the next time you need to change it will ultimately come.  And your increased efficiency will make your organisational stakeholders happy, too! :smile:<br/></img>
 
-## <a href="https://travis-ci.org/camunda/camunda-bpm-assert"><img src="https://travis-ci.org/camunda/camunda-bpm-assert.svg?branch=master" align="right"/></a>Use it with confidence!
+## Why a cloned version
 
-<img src="http://camunda.github.io/camunda-bpm-assert/resources/images/community-award.png" align="right" width="76">Camunda BPM Assert works with **all versions of Camunda BPM** since 7.0 up to the most recent and *all the Java versions* (1.6, 1.7., 1.8) still relevant for Camunda BPM installations out there. This is continuously verified by executing around 350 test cases against a [travis ci test matrix](https://travis-ci.org/camunda/camunda-bpm-assert). In 2014, the library won the **Camunda BPM Community Award**. 
+Original Camunda BPM Assert works with **all versions of Camunda BPM** since 7.0 up to the most 
+recent and *all the Java versions* (1.6, 1.7., 1.8) still relevant for Camunda BPM installations 
+out there. This is continuously verified by executing around 350 test cases against 
+a [travis ci test matrix](https://travis-ci.org/camunda/camunda-bpm-assert).
+
+In fact the original version is compatible with new versions, but offers no help for testing anything newer 
+than Camunda BPM 7.6. In addition, it *fixes version of AssertJ to a legacy 1.7.1* and doesn't work with 
+AssertJ 3 at all. So, we decided to **create a clone with newest version of used framework** :
+ * assertj 3.11.1
+
+Internally, we are running and testing with the following versions:
+
+ * JDK 1.8
+ * Camunda BPM 7.9.0
+ * mockito 2.23.4 
+ * powermock 2.0.0-RC.4
+ * junit 4.12
+
+So we dropped legacy support and 
+
+
+
+## <a href="https://travis-ci.org/holunda-io/camunda-bpm-assert"><img src="https://travis-ci.org/holunda-io/camunda-bpm-assert.svg?branch=master" align="right"/></a>Use it with confidence!
+
+<img src="http://camunda.github.io/camunda-bpm-assert/resources/images/community-award.png" align="right" width="76">
+In 2014, the library won the **Camunda BPM Community Award**. 
+
+
+
+ 
+
 
 ## Get started in _3 simple steps_!
 
@@ -44,7 +74,12 @@ import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 
 **3.** Start using the assertions in your **test methods**
 
-You have now access to all the assertions provided by Joel Costigliola's [AssertJ](http://joel-costigliola.github.io/assertj/) rich assertions library - plus the additional Camunda BPM assertions building upon them. Now assume you want to assert that your process instance is actually **started**, **waiting** at a specific **user task** and that task should yet be **unassigned**, but waiting to be assigned to a user of a specific group? Then write:
+You have now access to all the assertions provided by Joel Costigliola's 
+[AssertJ](http://joel-costigliola.github.io/assertj/) rich assertions library - 
+plus the additional Camunda BPM assertions building upon them. Now assume you want to 
+assert that your process instance is actually **started**, **waiting** at a 
+specific **user task** and that task should yet be **unassigned**, 
+but waiting to be assigned to a user of a specific group? Then write:
 
 ```groovy
 assertThat(processInstance).isStarted()
@@ -59,16 +94,15 @@ Congrats! You are successfully using Camunda BPM Assert. Find a more detailed de
 
 ## Further Resources
 
-* [User Guide](./camunda-bpm-assert/README.md)
-* [API Docs](http://camunda.github.io/camunda-bpm-assert/apidocs/) 
-* [Issue Tracker](https://github.com/camunda/camunda-bpm-assert/issues) 
-* [Roadmap](https://github.com/camunda/camunda-bpm-assert/issues/milestones?state=open&with_issues=no) 
-* [Download](https://github.com/camunda/camunda-bpm-assert/releases)
-* [Continuous Integration](https://travis-ci.org/camunda/camunda-bpm-assert)
+* [User Guide](./camunda-bpm-assert/README.md) 
+* [Issue Tracker](https://github.com/holunda-io/camunda-bpm-assert/issues) 
+* [Roadmap](https://github.com/camunda/holunda-io/issues/milestones?state=open&with_issues=no) 
+* [Download](https://github.com/holunda-io/camunda-bpm-assert/releases)
+* [Continuous Integration](https://travis-ci.org/holunda-io/camunda-bpm-assert)
 
-## Maintenance &amp; License
+## License
 
-<a href="http://plexiti.com"><img src="http://plexiti.com/en/img/logo.png" align="right" width="210"></img></a>Martin Schimak<br/>[Blog](http://plexiti.com) &#8226; [GitHub](https://github.com/martinschimak) &#8226; [eMail](mailto:martin.schimak@plexiti.com)<br/>Apache License, Version 2.0
+Apache License, Version 2.0
 
 ## Contributors
 
@@ -77,4 +111,9 @@ Congrats! You are successfully using Camunda BPM Assert. Find a more detailed de
 [Malte Sörensen](https://github.com/malteser) (Holisticon AG)<br>
 [Simon Zambrovski](https://github.com/zambrovski) (Holisticon AG)
 
-... and [many others](https://github.com/camunda/camunda-bpm-assert/graphs/contributors). You want to **contribute**? You are very welcome! Please contact me directly via [eMail](mailto:martin.schimak@plexiti.com).
+
+<a href="http://plexiti.com"><img src="http://plexiti.com/en/img/logo.png" align="right" width="210"></img></a><br>
+[Martin Schimak](https://github.com/martinschimak) Plexiti
+
+... and [many others](https://github.com/camunda/camunda-bpm-assert/graphs/contributors). 
+
