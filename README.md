@@ -4,6 +4,7 @@
 <img src="https://travis-ci.org/holunda-io/camunda-bpm-assert.svg?branch=master" align="left"/>
 <a href="https://maven-badges.herokuapp.com/maven-central/io.holunda.testing/camunda-bpm-assert"><img src="https://maven-badges.herokuapp.com/maven-central/io.holunda.testing/camunda-bpm-assert/badge.svg" align="left"/></a>
 
+<br>
 
 The community extension **Camunda BPM Assert** makes it easy to **assert** the status of your BPMN processes and CMMN cases when **driving** them forward in your typical unit test methods. Simply write code like
 
