@@ -12,17 +12,6 @@
 
     <packaging>jar</packaging>
     
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.camunda.bpm</groupId>
-                <artifactId>camunda-bom</artifactId>
-                <version>7.6.0</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
 
@@ -31,6 +20,8 @@
             <artifactId>assertj-core</artifactId>
             <scope>compile</scope>
         </dependency>
+
+
         <dependency>
             <groupId>org.camunda.bpm</groupId>
             <artifactId>camunda-engine</artifactId>
@@ -48,10 +39,9 @@
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
+            <artifactId>powermock-api-mockito2</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <developers>

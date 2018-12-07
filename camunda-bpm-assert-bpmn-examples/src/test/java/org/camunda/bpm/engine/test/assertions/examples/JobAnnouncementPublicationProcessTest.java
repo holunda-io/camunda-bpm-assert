@@ -3,9 +3,9 @@ package org.camunda.bpm.engine.test.assertions.examples;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
-import org.camunda.bpm.engine.test.mock.Mocks;
 import org.camunda.bpm.engine.test.assertions.examples.jobannouncement.JobAnnouncement;
 import org.camunda.bpm.engine.test.assertions.examples.jobannouncement.JobAnnouncementService;
+import org.camunda.bpm.engine.test.mock.Mocks;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 /**
@@ -22,12 +21,15 @@ import static org.mockito.Mockito.*;
  */
 public class JobAnnouncementPublicationProcessTest {
 
-  @Rule public ProcessEngineRule processEngineRule = new ProcessEngineRule();
+  @Rule
+  public ProcessEngineRule processEngineRule = new ProcessEngineRule();
 
-  @Mock public JobAnnouncementService jobAnnouncementService;
-  @Mock public JobAnnouncement jobAnnouncement;
+  @Mock
+  public JobAnnouncementService jobAnnouncementService;
+  @Mock
+  public JobAnnouncement jobAnnouncement;
 
-          // Some boilerplate - we can easily get rid of again by 
+  // Some boilerplate - we can easily get rid of again by
   @Before // deciding where to ultimately put the jUnit integration
   public void setUp() {
     MockitoAnnotations.initMocks(this);
@@ -39,9 +41,9 @@ public class JobAnnouncementPublicationProcessTest {
   public void tearDown() {
     Mocks.reset();
   }
-  
+
   @Test
-  @Deployment(resources = { "camunda-testing-job-announcement-publication.bpmn" })
+  @Deployment(resources = {"camunda-testing-job-announcement-publication.bpmn"})
   public void testPublishOnlyOnCompanyWebsite() {
 
     when(jobAnnouncement.getId()).thenReturn(1L);
@@ -70,7 +72,7 @@ public class JobAnnouncementPublicationProcessTest {
   }
 
   @Test
-  @Deployment(resources = { "camunda-testing-job-announcement-publication.bpmn" })
+  @Deployment(resources = {"camunda-testing-job-announcement-publication.bpmn"})
   public void testPublishAlsoOnTwitter() {
 
     ProcessInstance processInstance = runtimeService().startProcessInstanceByKey(
@@ -98,7 +100,7 @@ public class JobAnnouncementPublicationProcessTest {
   }
 
   @Test
-  @Deployment(resources = { "camunda-testing-job-announcement-publication.bpmn" })
+  @Deployment(resources = {"camunda-testing-job-announcement-publication.bpmn"})
   public void testPublishAlsoOnFacebook() {
 
     ProcessInstance processInstance = runtimeService().startProcessInstanceByKey(
@@ -126,7 +128,7 @@ public class JobAnnouncementPublicationProcessTest {
   }
 
   @Test
-  @Deployment(resources = { "camunda-testing-job-announcement-publication.bpmn" })
+  @Deployment(resources = {"camunda-testing-job-announcement-publication.bpmn"})
   public void testPublishAlsoOnFacebookAndTwitter() {
 
     ProcessInstance processInstance = runtimeService().startProcessInstanceByKey(
@@ -147,7 +149,7 @@ public class JobAnnouncementPublicationProcessTest {
       "Anzeige_auf_Twitter_publizieren",
       "Anzeige_auf_Facebook_Page_publizieren"
     );
-    
+
     assertThat(processInstance).isEnded();
 
     verifyNoMoreInteractions(jobAnnouncementService);

@@ -1,16 +1,5 @@
 package org.camunda.bpm.engine.test.assertions.cmmn;
 
-import static org.camunda.bpm.engine.test.assertions.cmmn.CmmnAwareTests.complete;
-import static org.camunda.bpm.engine.test.assertions.cmmn.CmmnAwareTests.withVariables;
-import static org.camunda.bpm.engine.test.assertions.helpers.CamundaMatchers.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.*;
-import static org.powermock.api.mockito.PowerMockito.verifyNoMoreInteractions;
-
 import org.assertj.core.api.Assertions;
 import org.camunda.bpm.engine.CaseService;
 import org.camunda.bpm.engine.ProcessEngine;
@@ -22,15 +11,23 @@ import org.camunda.bpm.engine.test.assertions.bpmn.AbstractAssertions;
 import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests;
 import org.camunda.bpm.engine.test.assertions.helpers.CamundaMatchers;
 import org.camunda.bpm.engine.test.assertions.helpers.CaseExecutionQueryFluentAnswer;
-import org.camunda.bpm.engine.test.util.CamundaBpmApiAwareTestCase;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import static org.camunda.bpm.engine.test.assertions.cmmn.CmmnAwareTests.withVariables;
+import static org.camunda.bpm.engine.test.assertions.helpers.CamundaMatchers.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.*;
+import static org.powermock.api.mockito.PowerMockito.verifyNoMoreInteractions;
 
 
 /**
@@ -42,28 +39,36 @@ import org.powermock.modules.junit4.PowerMockRunner;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CmmnAwareAssertions.class, BpmnAwareTests.class, CmmnAwareTests.class, AbstractAssertions.class})
-public class CmmnAwareTestsTest extends CamundaBpmApiAwareTestCase {
+public class CmmnAwareTestsTest {
 
-  public static final String ACTIVITY_ID = "FOO";
-  public static final String CASE_INSTANCE_ID = "BAR";
+  static final String ACTIVITY_ID = "FOO";
+  static final String CASE_INSTANCE_ID = "BAR";
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
-  @Mock
-  private CaseInstance caseInstance;
+  private CaseInstance caseInstance = mock(CaseInstance.class);
 
-  @Mock
-  private CaseExecution caseExecution;
+  private CaseExecution caseExecution = mock(CaseExecution.class);
 
-  @Mock
-  private CaseDefinition caseDefinition;
+  private CaseDefinition caseDefinition = mock(CaseDefinition.class);
 
-  //mocked below
-  private CaseExecutionQuery caseExecutionQuery;
+  private CaseExecutionQuery caseExecutionQuery = mock(CaseExecutionQuery.class, new CaseExecutionQueryFluentAnswer());
+
+  @Before
+  public void prepareCaseExecutionQuery() {
+    when(caseExecutionQuery.singleResult()).thenReturn(caseExecution);
+    when(caseExecutionQuery.toString()).thenCallRealMethod();
+  }
+
+  @Before
+  public void prepareCaseInstance() {
+    when(caseInstance.getId()).thenReturn(CASE_INSTANCE_ID);
+  }
+
 
   @Test
-  public void assertThatCaseDefinition_should_delegate_to_CmmnAwareAssertions() throws Exception {
+  public void assertThatCaseDefinition_should_delegate_to_CmmnAwareAssertions() {
 
     //prepare and mock static methods
     //because we need control over the CaseDefinitionAssert created
@@ -75,14 +80,14 @@ public class CmmnAwareTestsTest extends CamundaBpmApiAwareTestCase {
     CaseDefinitionAssert actualCaseDefinitionAssert = CmmnAwareTests.assertThat(caseDefinition);
 
     //then the delegate is called with that CaseDefinition object
-    verifyStatic();
+    verifyStatic(CmmnAwareAssertions.class);
     CmmnAwareAssertions.assertThat(caseDefinition);
     //and whatever the delegate returns, is returned by the tested method, too
     Assertions.assertThat(actualCaseDefinitionAssert).isSameAs(caseDefinitionAssert);
   }
 
   @Test
-  public void assertThatCaseExecution_should_delegate_to_CmmnAwareAssertions() throws Exception {
+  public void assertThatCaseExecution_should_delegate_to_CmmnAwareAssertions() {
 
     //prepare and mock static methods
     //because we need control over the CaseExecutionAssert created
@@ -94,14 +99,14 @@ public class CmmnAwareTestsTest extends CamundaBpmApiAwareTestCase {
     CaseExecutionAssert actualCaseExecutionAssert = CmmnAwareTests.assertThat(caseExecution);
 
     //then the delegate is called with that CaseExecution object
-    verifyStatic();
+    verifyStatic(CmmnAwareAssertions.class);
     CmmnAwareAssertions.assertThat(caseExecution);
     //and whatever the delegate returns, is returned by the tested method, too
     Assertions.assertThat(actualCaseExecutionAssert).isSameAs(caseExecutionAssert);
   }
 
   @Test
-  public void assertThatCaseInstance_should_delegate_to_CmmnAwareAssertions() throws Exception {
+  public void assertThatCaseInstance_should_delegate_to_CmmnAwareAssertions() {
 
     //prepare and mock static methods
     //because we need control over the CaseInstanceAssert created
@@ -113,14 +118,14 @@ public class CmmnAwareTestsTest extends CamundaBpmApiAwareTestCase {
     CaseInstanceAssert actualCaseInstanceAssert = CmmnAwareTests.assertThat(caseInstance);
 
     //then the delegate is called with that CaseInstance object
-    verifyStatic();
+    verifyStatic(CmmnAwareAssertions.class);
     CmmnAwareAssertions.assertThat(caseInstance);
     //and whatever the delegate returns, is returned by the tested method, too
     Assertions.assertThat(actualCaseInstanceAssert).isSameAs(caseInstanceAssert);
   }
 
   @Test
-  public void caseDefinitionQuery_should_create_vanilla_query() throws Exception {
+  public void caseDefinitionQuery_should_create_vanilla_query() {
 
     //prepare and mock static methods
     //because we need control over the CaseDefinitionQuery created
@@ -143,7 +148,7 @@ public class CmmnAwareTestsTest extends CamundaBpmApiAwareTestCase {
   }
 
   @Test
-  public void caseExecutionCaseExecutionQueryCaseInstance_should_delegate_to_assertThatCaseInstance() throws Exception {
+  public void caseExecutionCaseExecutionQueryCaseInstance_should_delegate_to_assertThatCaseInstance() {
     CaseInstanceAssert caseInstanceAssert = mock(CaseInstanceAssert.class);
     when(caseInstanceAssert.isNotNull()).thenReturn(caseInstanceAssert);
     when(caseInstanceAssert.descendantCaseExecution(caseExecutionQuery)).thenReturn(mock(CaseExecutionAssert.class));
@@ -158,7 +163,7 @@ public class CmmnAwareTestsTest extends CamundaBpmApiAwareTestCase {
     CaseExecution actualCaseExecution = CmmnAwareTests.caseExecution(caseExecutionQuery, caseInstance);
 
     //then the call is delegated via assertThat to a CaseInstanceAssert
-    verifyStatic();
+    verifyStatic(CmmnAwareTests.class);
     CmmnAwareTests.assertThat(caseInstance);
 
     //and the CaseExecutionQuery is used for narrowing down the result
@@ -167,7 +172,7 @@ public class CmmnAwareTestsTest extends CamundaBpmApiAwareTestCase {
   }
 
   @Test
-  public void caseExecutionQuery_should_create_vanilla_query() throws Exception {
+  public void caseExecutionQuery_should_create_vanilla_query() {
 
     //prepare and mock static methods
     //because we need control over the CaseExecutionQuery created
@@ -189,7 +194,7 @@ public class CmmnAwareTestsTest extends CamundaBpmApiAwareTestCase {
   }
 
   @Test
-  public void caseExecutionStringCaseInstance_should_delegate_to_its_query_variant() throws Exception {
+  public void caseExecutionStringCaseInstance_should_delegate_to_its_query_variant() {
     //prepare and mock static methods
     //because we need control over the context of tested method
     mockStatic(CmmnAwareTests.class);
@@ -204,12 +209,12 @@ public class CmmnAwareTestsTest extends CamundaBpmApiAwareTestCase {
     verify(caseExecutionQuery).activityId(ACTIVITY_ID);
     verifyNoMoreInteractions(caseExecutionQuery);
     //and the call is delegated properly
-    verifyStatic();
+    verifyStatic(CmmnAwareTests.class);
     CmmnAwareTests.caseExecution(caseExecutionQuery, caseInstance);
   }
 
   @Test
-  public void caseInstanceQuery_should_create_vanilla_query() throws Exception {
+  public void caseInstanceQuery_should_create_vanilla_query() {
 
     //prepare and mock static methods
     //because we need control over the CaseInstanceQuery created
@@ -233,7 +238,7 @@ public class CmmnAwareTestsTest extends CamundaBpmApiAwareTestCase {
   }
 
   @Test
-  public void caseService_should_return_the_processEngines_caseService() throws Exception {
+  public void caseService_should_return_the_processEngines_caseService() {
 
     //prepare and mock static methods
     //because we need control over the CaseService created
@@ -251,7 +256,7 @@ public class CmmnAwareTestsTest extends CamundaBpmApiAwareTestCase {
   }
 
   @Test
-  public void completeCaseExecution_should_delegate_to_caseService() throws Exception {
+  public void completeCaseExecution_should_delegate_to_caseService() {
     //prepare and mock static methods
     //because we need control over the CaseService created
     mockStatic(AbstractAssertions.class);
@@ -268,14 +273,14 @@ public class CmmnAwareTestsTest extends CamundaBpmApiAwareTestCase {
   }
 
   @Test
-  public void completeCaseExecution_should_throw_IAE_for_null_arg() throws Exception {
+  public void completeCaseExecution_should_throw_IAE_for_null_arg() {
     thrown.expect(IllegalArgumentException.class);
 
     CmmnAwareTests.complete((CaseExecution) null);
   }
 
   @Test
-  public void disableCaseExecution_should_delegate_to_caseService() throws Exception {
+  public void disableCaseExecution_should_delegate_to_caseService() {
     //prepare and mock static methods
     //because we need control over the CaseService created
     mockStatic(AbstractAssertions.class);
@@ -292,14 +297,14 @@ public class CmmnAwareTestsTest extends CamundaBpmApiAwareTestCase {
   }
 
   @Test
-  public void disableCaseExecution_should_throw_IAE_for_null_arg() throws Exception {
+  public void disableCaseExecution_should_throw_IAE_for_null_arg() {
     thrown.expect(IllegalArgumentException.class);
 
     CmmnAwareTests.disable((CaseExecution) null);
   }
 
   @Test
-  public void manuallyStartCaseExecution_should_delegate_to_caseService() throws Exception {
+  public void manuallyStartCaseExecution_should_delegate_to_caseService() {
     //prepare and mock static methods
     //because we need control over the CaseService created
     mockStatic(AbstractAssertions.class);
@@ -316,14 +321,14 @@ public class CmmnAwareTestsTest extends CamundaBpmApiAwareTestCase {
   }
 
   @Test
-  public void manuallyStartCaseExecution_should_throw_IAE_for_null_arg() throws Exception {
+  public void manuallyStartCaseExecution_should_throw_IAE_for_null_arg() {
     thrown.expect(IllegalArgumentException.class);
 
     CmmnAwareTests.manuallyStart((CaseExecution) null);
   }
 
   @Test
-  public void completeCaseExecutionWithVariables_should_delegate_to_caseService() throws Exception {
+  public void completeCaseExecutionWithVariables_should_delegate_to_caseService() {
     //prepare and mock static methods
     //because we need control over the CaseService created
     mockStatic(AbstractAssertions.class);
@@ -344,28 +349,15 @@ public class CmmnAwareTestsTest extends CamundaBpmApiAwareTestCase {
   }
 
   @Test
-  public void completeCaseExecutionWithVariables_should_throw_IAE_for_null_arg_caseExecution() throws Exception {
+  public void completeCaseExecutionWithVariables_should_throw_IAE_for_null_arg_caseExecution() {
     thrown.expect(IllegalArgumentException.class);
 
     CmmnAwareTests.complete((CaseExecution) null, withVariables("aVariable", "aValue"));
   }
 
   @Test
-  public void completeCaseExecutionWithVariables_should_throw_IAE_for_null_arg_valriables() throws Exception {
+  public void completeCaseExecutionWithVariables_should_throw_IAE_for_null_arg_valriables() {
     thrown.expect(IllegalArgumentException.class);
-
     CmmnAwareTests.complete(caseExecution, null);
-  }
-
-  @Before
-  public void prepareCaseExecutionQuery() {
-    caseExecutionQuery = mock(CaseExecutionQuery.class, new CaseExecutionQueryFluentAnswer());
-    when(caseExecutionQuery.singleResult()).thenReturn(caseExecution);
-    when(caseExecutionQuery.toString()).thenCallRealMethod();
-  }
-
-  @Before
-  public void prepareCaseInstance() {
-    when(caseInstance.getId()).thenReturn(CASE_INSTANCE_ID);
   }
 }

@@ -1,5 +1,6 @@
 package org.camunda.bpm.engine.test.assertions.helpers;
 
+import org.camunda.bpm.engine.query.Query;
 import org.camunda.bpm.engine.runtime.CaseExecutionQuery;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -13,8 +14,11 @@ import org.mockito.stubbing.Answer;
 public class CaseExecutionQueryFluentAnswer implements Answer<CaseExecutionQuery> {
 
   @Override
-  public CaseExecutionQuery answer(InvocationOnMock invocationOnMock) throws Throwable {
-    if (invocationOnMock.getMethod().getReturnType().isAssignableFrom(CaseExecutionQuery.class)) {
+  public CaseExecutionQuery answer(InvocationOnMock invocationOnMock) {
+    final Class<?> methodReturnType = invocationOnMock.getMethod().getReturnType();
+    if (CaseExecutionQuery.class.isAssignableFrom(methodReturnType) // fluent api methods
+      || Query.class.isAssignableFrom(methodReturnType) // asc/desc
+    ) {
       return (CaseExecutionQuery) invocationOnMock.getMock();
     } else {
       return null;

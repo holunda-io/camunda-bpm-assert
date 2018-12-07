@@ -1,17 +1,21 @@
 package org.camunda.bpm.engine.test.assertions.bpmn;
 
+import org.assertj.core.api.Assertions;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.history.*;
 import org.camunda.bpm.engine.repository.ProcessDefinitionQuery;
-import org.camunda.bpm.engine.runtime.*;
+import org.camunda.bpm.engine.runtime.ExecutionQuery;
+import org.camunda.bpm.engine.runtime.JobQuery;
+import org.camunda.bpm.engine.runtime.ProcessInstanceQuery;
+import org.camunda.bpm.engine.runtime.VariableInstanceQuery;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.task.TaskQuery;
-import org.assertj.core.api.Assertions;
 
 import java.util.Date;
 
 /**
  * Assertions for a {@link Task}
+ *
  * @author Martin Schimak <martin.schimak@plexiti.com>
  * @author Rafael Cordones <rafael@cordones.me>
  */
@@ -31,11 +35,11 @@ public class TaskAssert extends AbstractProcessAssert<TaskAssert, Task> {
   }
 
   /**
-   * Verifies the expectation that the {@link Task} is currently not assigned to 
+   * Verifies the expectation that the {@link Task} is currently not assigned to
    * any particular user.
-   * 
-   * @return  this {@link TaskAssert}
-   */  
+   *
+   * @return this {@link TaskAssert}
+   */
   public TaskAssert isNotAssigned() {
     Task current = getExistingCurrent();
     Assertions.assertThat(current.getAssignee())
@@ -47,18 +51,18 @@ public class TaskAssert extends AbstractProcessAssert<TaskAssert, Task> {
   }
 
   /**
-   * Verifies the expectation that the {@link Task} is currently assigned to 
+   * Verifies the expectation that the {@link Task} is currently assigned to
    * the specified user.
-   * 
-   * @param   userId id of the user the task should be currently assigned to.
-   * @return  this {@link TaskAssert}
+   *
+   * @param userId id of the user the task should be currently assigned to.
+   * @return this {@link TaskAssert}
    */
   public TaskAssert isAssignedTo(final String userId) {
     Task current = getExistingCurrent();
     Assertions
       .assertThat(current.getAssignee())
-      .overridingErrorMessage("Expecting %s to be assigned to user '%s', but found it to be assigned to '%s'!", 
-        toString(current), 
+      .overridingErrorMessage("Expecting %s to be assigned to user '%s', but found it to be assigned to '%s'!",
+        toString(current),
         userId,
         current.getAssignee())
       .isEqualTo(userId);
@@ -66,28 +70,27 @@ public class TaskAssert extends AbstractProcessAssert<TaskAssert, Task> {
   }
 
   /**
-   * Verifies the expectation that the {@link Task} is currently waiting to 
+   * Verifies the expectation that the {@link Task} is currently waiting to
    * be assigned to a user of the specified candidate group.
-   * 
-   * @param   candidateGroupId id of a candidate group the task is waiting to be assigned to
-   * @return  this {@link TaskAssert}
-   * @since   Camunda BPM 7.0
+   *
+   * @param candidateGroupId id of a candidate group the task is waiting to be assigned to
+   * @return this {@link TaskAssert}
+   * @since Camunda BPM 7.0
    */
   public TaskAssert hasCandidateGroup(final String candidateGroupId) {
     return hasCandidateGroup(candidateGroupId, true);
   }
 
   /**
-   * Verifies the expectation that the {@link Task} is currently associated to the 
-   * specified candidate group - no matter whether it is already assigned to a 
+   * Verifies the expectation that the {@link Task} is currently associated to the
+   * specified candidate group - no matter whether it is already assigned to a
    * specific user or not.
-   * 
-   * @param   candidateGroupId id of a candidate group the task is associated to
-   * @return  this {@link TaskAssert}
-   * @since   Camunda BPM 7.3
+   *
+   * @param candidateGroupId id of a candidate group the task is associated to
+   * @return this {@link TaskAssert}
+   * @since Camunda BPM 7.3
    */
   public TaskAssert hasCandidateGroupAssociated(final String candidateGroupId) {
-    assertApi("7.3");
     return hasCandidateGroup(candidateGroupId, false);
   }
 
@@ -107,31 +110,30 @@ public class TaskAssert extends AbstractProcessAssert<TaskAssert, Task> {
         candidateGroupId)
       .isNotNull();
     return this;
-  }  
+  }
 
   /**
-   * Verifies the expectation that the {@link Task} is currently waiting to 
+   * Verifies the expectation that the {@link Task} is currently waiting to
    * be assigned to a specified candidate user.
-   * 
-   * @param   candidateUserId id of a candidate user the task is waiting to be assigned to
-   * @return  this {@link TaskAssert}
-   * @since   Camunda BPM 7.0
+   *
+   * @param candidateUserId id of a candidate user the task is waiting to be assigned to
+   * @return this {@link TaskAssert}
+   * @since Camunda BPM 7.0
    */
   public TaskAssert hasCandidateUser(final String candidateUserId) {
     return hasCandidateUser(candidateUserId, true);
   }
 
   /**
-   * Verifies the expectation that the {@link Task} is currently associated to the 
-   * specified candidate user - no matter whether it is already assigned to a 
+   * Verifies the expectation that the {@link Task} is currently associated to the
+   * specified candidate user - no matter whether it is already assigned to a
    * specific user or not.
    *
-   * @param   candidateUserId id of a candidate user the task is associated to
-   * @return  this {@link TaskAssert}
-   * @since   Camunda BPM 7.3
+   * @param candidateUserId id of a candidate user the task is associated to
+   * @return this {@link TaskAssert}
+   * @since Camunda BPM 7.3
    */
   public TaskAssert hasCandidateUserAssociated(final String candidateUserId) {
-    assertApi("7.3");
     return hasCandidateUser(candidateUserId, false);
   }
 
@@ -146,28 +148,28 @@ public class TaskAssert extends AbstractProcessAssert<TaskAssert, Task> {
     }
     final Task withUser = taskQuery.singleResult();
     Assertions.assertThat(withUser)
-        .overridingErrorMessage("Expecting %s to have candidate user '%s', but found it not to have that candidate user!",
-          toString(current),
-          candidateUserId)
+      .overridingErrorMessage("Expecting %s to have candidate user '%s', but found it not to have that candidate user!",
+        toString(current),
+        candidateUserId)
       .isNotNull();
     return this;
   }
 
   /**
    * Verifies the due date of a {@link Task}.
-   * 
-   * @param   dueDate the date the task should be due at
-   * @return  this {@link TaskAssert}
+   *
+   * @param dueDate the date the task should be due at
+   * @return this {@link TaskAssert}
    */
   public TaskAssert hasDueDate(final Date dueDate) {
     Task current = getExistingCurrent();
     Assertions.assertThat(dueDate).isNotNull();
     Assertions.assertThat(current.getDueDate())
-        .overridingErrorMessage("Expecting %s to be due at '%s', but found it to be due at '%s'!",
-          toString(current),
-          dueDate, 
-          current.getDueDate()
-        )
+      .overridingErrorMessage("Expecting %s to be due at '%s', but found it to be due at '%s'!",
+        toString(current),
+        dueDate,
+        current.getDueDate()
+      )
       .isEqualTo(dueDate);
     return this;
   }
@@ -176,9 +178,9 @@ public class TaskAssert extends AbstractProcessAssert<TaskAssert, Task> {
    * Verifies the definition key of a {@link Task}. This key can be found
    * in the &lt;userTask id="myTaskDefinitionKey" .../&gt; attribute of the
    * process definition BPMN 2.0 XML file.
-   * 
-   * @param   taskDefinitionKey the expected value of the task/@id attribute
-   * @return  this {@link TaskAssert}
+   *
+   * @param taskDefinitionKey the expected value of the task/@id attribute
+   * @return this {@link TaskAssert}
    */
   public TaskAssert hasDefinitionKey(final String taskDefinitionKey) {
     Task current = getExistingCurrent();
@@ -191,12 +193,12 @@ public class TaskAssert extends AbstractProcessAssert<TaskAssert, Task> {
       ).isEqualTo(taskDefinitionKey);
     return this;
   }
-  
+
   /**
    * Verifies the expectation that the {@link Task} has a specified form key.
-   * 
-   * @param   formKey the expected form key.
-   * @return  this {@link TaskAssert}
+   *
+   * @param formKey the expected form key.
+   * @return this {@link TaskAssert}
    */
   public TaskAssert hasFormKey(String formKey) {
     Task current = getExistingCurrent();
@@ -206,12 +208,12 @@ public class TaskAssert extends AbstractProcessAssert<TaskAssert, Task> {
       .isEqualTo(formKey);
     return this;
   }
-  
+
   /**
    * Verifies the internal id of a {@link Task}.
-   * 
-   * @param   id the expected value of the internal task id
-   * @return  this {@link TaskAssert}
+   *
+   * @param id the expected value of the internal task id
+   * @return this {@link TaskAssert}
    */
   public TaskAssert hasId(final String id) {
     Task current = getExistingCurrent();
@@ -229,9 +231,9 @@ public class TaskAssert extends AbstractProcessAssert<TaskAssert, Task> {
    * Verifies the name (label) of a {@link Task}. This name can be found
    * in the &lt;userTask name="myName" .../&gt; attribute of the
    * process definition BPMN 2.0 XML file.
-   * 
-   * @param   name the expected value of the name
-   * @return  this {@link TaskAssert}
+   *
+   * @param name the expected value of the name
+   * @return this {@link TaskAssert}
    */
   public TaskAssert hasName(final String name) {
     Task current = getExistingCurrent();
@@ -247,17 +249,17 @@ public class TaskAssert extends AbstractProcessAssert<TaskAssert, Task> {
 
   /**
    * Verifies the description of a {@link Task}. This description can be found
-   * in the &lt;userTask&gt;&lt;documentation&gt;description&lt;/documentation&gt;&lt;/userTask&gt; 
+   * in the &lt;userTask&gt;&lt;documentation&gt;description&lt;/documentation&gt;&lt;/userTask&gt;
    * element of the process definition BPMN 2.0 XML file.
-   * 
-   * @param   description the expected value of the description
-   * @return  this {@link TaskAssert}
+   *
+   * @param description the expected value of the description
+   * @return this {@link TaskAssert}
    */
   public TaskAssert hasDescription(final String description) {
     Task current = getExistingCurrent();
     Assertions.assertThat(description).isNotNull();
     Assertions.assertThat(current.getDescription())
-      .overridingErrorMessage("Expecting %s to have description '%s', but found it to be '%s'!", 
+      .overridingErrorMessage("Expecting %s to have description '%s', but found it to be '%s'!",
         toString(current),
         description,
         current.getDescription())
@@ -267,12 +269,12 @@ public class TaskAssert extends AbstractProcessAssert<TaskAssert, Task> {
 
   @Override
   protected String toString(Task task) {
-    return task != null ? 
+    return task != null ?
       String.format("%s {" +
-        "id='%s', " +
-        "processInstanceId='%s', " +
-        "taskDefinitionKey='%s', " +
-        "name='%s'}",
+          "id='%s', " +
+          "processInstanceId='%s', " +
+          "taskDefinitionKey='%s', " +
+          "name='%s'}",
         Task.class.getSimpleName(),
         task.getId(),
         task.getProcessInstanceId(),
@@ -281,40 +283,40 @@ public class TaskAssert extends AbstractProcessAssert<TaskAssert, Task> {
       ) : null;
   }
 
-  /* TaskQuery, automatically narrowed to {@link ProcessInstance} of actual 
-   * {@link Task} 
+  /* TaskQuery, automatically narrowed to {@link ProcessInstance} of actual
+   * {@link Task}
    */
   @Override
   protected TaskQuery taskQuery() {
     return super.taskQuery().processInstanceId(actual.getProcessInstanceId());
   }
 
-  /* JobQuery, automatically narrowed to {@link ProcessInstance} of actual 
-   * {@link Task} 
+  /* JobQuery, automatically narrowed to {@link ProcessInstance} of actual
+   * {@link Task}
    */
   @Override
   protected JobQuery jobQuery() {
     return super.jobQuery().processInstanceId(actual.getProcessInstanceId());
   }
 
-  /* ProcessInstanceQuery, automatically narrowed to {@link ProcessInstance} of 
-   * actual {@link Task} 
+  /* ProcessInstanceQuery, automatically narrowed to {@link ProcessInstance} of
+   * actual {@link Task}
    */
   @Override
   protected ProcessInstanceQuery processInstanceQuery() {
     return super.processInstanceQuery().processInstanceId(actual.getProcessInstanceId());
   }
 
-  /* ExecutionQuery, automatically narrowed to {@link ProcessInstance} of 
-   * actual {@link Task} 
+  /* ExecutionQuery, automatically narrowed to {@link ProcessInstance} of
+   * actual {@link Task}
    */
   @Override
   protected ExecutionQuery executionQuery() {
     return super.executionQuery().processInstanceId(actual.getProcessInstanceId());
   }
 
-  /* VariableInstanceQuery, automatically narrowed to {@link ProcessInstance} of 
-   * actual {@link Task} 
+  /* VariableInstanceQuery, automatically narrowed to {@link ProcessInstance} of
+   * actual {@link Task}
    */
   @Override
   protected VariableInstanceQuery variableInstanceQuery() {
@@ -327,40 +329,40 @@ public class TaskAssert extends AbstractProcessAssert<TaskAssert, Task> {
     return super.historicActivityInstanceQuery().processInstanceId(actual.getProcessInstanceId());
   }
 
-  /* HistoricDetailQuery, automatically narrowed to {@link ProcessInstance} of 
-   * actual {@link Task} 
+  /* HistoricDetailQuery, automatically narrowed to {@link ProcessInstance} of
+   * actual {@link Task}
    */
   @Override
   protected HistoricDetailQuery historicDetailQuery() {
     return super.historicDetailQuery().processInstanceId(actual.getProcessInstanceId());
   }
 
-  /* HistoricProcessInstanceQuery, automatically narrowed to {@link ProcessInstance} 
-   * of actual {@link Task} 
+  /* HistoricProcessInstanceQuery, automatically narrowed to {@link ProcessInstance}
+   * of actual {@link Task}
    */
   @Override
   protected HistoricProcessInstanceQuery historicProcessInstanceQuery() {
     return super.historicProcessInstanceQuery().processInstanceId(actual.getProcessInstanceId());
   }
 
-  /* HistoricTaskInstanceQuery, automatically narrowed to {@link ProcessInstance} 
-   * of actual {@link Task} 
+  /* HistoricTaskInstanceQuery, automatically narrowed to {@link ProcessInstance}
+   * of actual {@link Task}
    */
   @Override
   protected HistoricTaskInstanceQuery historicTaskInstanceQuery() {
     return super.historicTaskInstanceQuery().processInstanceId(actual.getProcessInstanceId());
   }
 
-  /* HistoricVariableInstanceQuery, automatically narrowed to {@link ProcessInstance} 
-   * of actual {@link Task} 
+  /* HistoricVariableInstanceQuery, automatically narrowed to {@link ProcessInstance}
+   * of actual {@link Task}
    */
   @Override
   protected HistoricVariableInstanceQuery historicVariableInstanceQuery() {
     return super.historicVariableInstanceQuery().processInstanceId(actual.getProcessInstanceId());
   }
 
-  /* ProcessDefinitionQuery, automatically narrowed to {@link ProcessDefinition} 
-   * of {@link ProcessInstance} of actual {@link Task} 
+  /* ProcessDefinitionQuery, automatically narrowed to {@link ProcessDefinition}
+   * of {@link ProcessInstance} of actual {@link Task}
    */
   @Override
   protected ProcessDefinitionQuery processDefinitionQuery() {

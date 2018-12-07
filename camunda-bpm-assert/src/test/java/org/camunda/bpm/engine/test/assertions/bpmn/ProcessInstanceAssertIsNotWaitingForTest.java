@@ -8,7 +8,8 @@ import org.camunda.bpm.engine.test.assertions.helpers.ProcessAssertTestCase;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
+import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
+import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.runtimeService;
 
 /**
  * @author Martin Schimak <martin.schimak@plexiti.com>
@@ -68,7 +69,7 @@ public class ProcessInstanceAssertIsNotWaitingForTest extends ProcessAssertTestC
       }
     });
   }
-  
+
   @Test
   @Deployment(resources = {"bpmn/ProcessInstanceAssert-isNotWaitingFor.bpmn"
   })
@@ -134,7 +135,7 @@ public class ProcessInstanceAssertIsNotWaitingForTest extends ProcessAssertTestC
     expect(new Failure() {
       @Override
       public void when() {
-        assertThat(processInstance).isNotWaitingFor(null);
+        assertThat(processInstance).isNotWaitingFor((String) null);
       }
     });
     // And

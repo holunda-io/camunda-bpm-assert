@@ -5,11 +5,15 @@ import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.history.*;
 import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.repository.ProcessDefinitionQuery;
-import org.camunda.bpm.engine.runtime.*;
+import org.camunda.bpm.engine.runtime.ExecutionQuery;
+import org.camunda.bpm.engine.runtime.JobQuery;
+import org.camunda.bpm.engine.runtime.ProcessInstanceQuery;
+import org.camunda.bpm.engine.runtime.VariableInstanceQuery;
 import org.camunda.bpm.engine.task.TaskQuery;
 
 /**
  * Assertions for a {@link ProcessDefinition}
+ *
  * @author Martin Schimak <martin.schimak@plexiti.com>
  * @author Rafael Cordones <rafael@cordones.me>
  */
@@ -32,10 +36,10 @@ public class ProcessDefinitionAssert extends AbstractProcessAssert<ProcessDefini
   protected String toString(ProcessDefinition processDefinition) {
     return processDefinition != null ?
       String.format("%s {" +
-        "id='%s', " +
-        "name='%s', " +
-        "description='%s', " +
-        "deploymentId='%s'}",
+          "id='%s', " +
+          "name='%s', " +
+          "description='%s', " +
+          "deploymentId='%s'}",
         ProcessDefinition.class.getSimpleName(),
         processDefinition.getId(),
         processDefinition.getName(),
@@ -45,23 +49,23 @@ public class ProcessDefinitionAssert extends AbstractProcessAssert<ProcessDefini
   }
 
   /**
-   * Verifies the expectation that the {@link ProcessDefinition} currently has the 
+   * Verifies the expectation that the {@link ProcessDefinition} currently has the
    * specified number of active instances, iow neither suspended nor ended instances.
    *
-   * @param   number the number of expected active instances 
-   * @return  this {@link ProcessDefinitionAssert}
+   * @param number the number of expected active instances
+   * @return this {@link ProcessDefinitionAssert}
    */
   public ProcessDefinitionAssert hasActiveInstances(final long number) {
     long instances = processInstanceQuery().active().count();
-    Assertions      
+    Assertions
       .assertThat(instances)
       .overridingErrorMessage("Expecting %s to have %s active instances, but found it to have %s.",
-        getCurrent(), number, instances 
+        getCurrent(), number, instances
       )
       .isEqualTo(number);
     return this;
   }
-  
+
   /* TaskQuery, automatically narrowed to actual {@link ProcessDefinition} */
   @Override
   protected TaskQuery taskQuery() {
@@ -127,5 +131,5 @@ public class ProcessDefinitionAssert extends AbstractProcessAssert<ProcessDefini
   protected ProcessDefinitionQuery processDefinitionQuery() {
     return super.processDefinitionQuery().processDefinitionId(actual.getId());
   }
-  
+
 }
