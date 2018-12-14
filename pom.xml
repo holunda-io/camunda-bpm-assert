@@ -173,31 +173,32 @@
     </dependency>
   </dependencies>
 
-  <!--
-  <repositories>
-    <repository>
-      <id>camunda-bpm-nexus</id>
-      <name>camunda-bpm-nexus</name>
-      <url>https://app.camunda.com/nexus/content/groups/public</url>
-    </repository>
-    <repository>
-      <id>jboss-public-repository</id>
-      <name>JBoss Repository</name>
-      <url>http://repository.jboss.org/nexus/content/groups/public</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
--->
-
   <build>
     <defaultGoal>clean install</defaultGoal>
     <pluginManagement>
       <plugins>
+
+        <!-- gitflow -->
+        <plugin>
+          <groupId>com.amashchenko.maven.plugin</groupId>
+          <artifactId>gitflow-maven-plugin</artifactId>
+          <version>1.10.0</version>
+          <configuration>
+            <gitFlowConfig>
+              <productionBranch>master</productionBranch>
+              <developmentBranch>develop</developmentBranch>
+              <featureBranchPrefix>feature/</featureBranchPrefix>
+              <releaseBranchPrefix>release/</releaseBranchPrefix>
+              <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+              <supportBranchPrefix>support/</supportBranchPrefix>
+              <origin>origin</origin>
+            </gitFlowConfig>
+            <useSnapshotInHotfix>true</useSnapshotInHotfix>
+            <useSnapshotInRelease>true</useSnapshotInRelease>
+            <keepBranch>false</keepBranch>
+            <pushRemote>true</pushRemote>
+          </configuration>
+        </plugin>
 
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
