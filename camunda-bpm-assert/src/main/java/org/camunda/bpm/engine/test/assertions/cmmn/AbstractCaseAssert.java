@@ -752,7 +752,7 @@ public abstract class AbstractCaseAssert<S extends AbstractCaseAssert<S, A>, A e
    * are available.
    */
   protected MapAssert<String, Object> variables() {
-    return (MapAssert<String, Object>) Assertions.assertThat(vars());
+    return Assertions.assertThat(vars());
   }
 
   /* Return variables map - independent of running/historic instance status */
