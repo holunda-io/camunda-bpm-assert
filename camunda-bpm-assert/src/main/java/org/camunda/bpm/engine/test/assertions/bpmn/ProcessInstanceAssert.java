@@ -99,7 +99,7 @@ public class ProcessInstanceAssert extends AbstractProcessAssert<ProcessInstance
     final String message = "Expecting %s " +
       (isWaitingAt ? "to be waiting at " + (exactly ? "exactly " : "") + "%s, " : "NOT to be waiting at %s, ") +
       "but it is actually waiting at %s.";
-    ListAssert<String> assertion = (ListAssert<String>) Assertions.assertThat(activeActivityIds)
+    ListAssert<String> assertion = Assertions.assertThat(activeActivityIds)
       .overridingErrorMessage(message,
         toString(current),
         Lists.newArrayList(activityIds),
@@ -153,7 +153,7 @@ public class ProcessInstanceAssert extends AbstractProcessAssert<ProcessInstance
       .isNotNull().isNotEmpty().doesNotContainNull();
     for (String messageName : messageNames) {
       List<Execution> executions = executionQuery().messageEventSubscriptionName(messageName).list();
-      ListAssert<Execution> assertion = (ListAssert<Execution>) Assertions.assertThat(executions).overridingErrorMessage("Expecting %s " +
+      ListAssert<Execution> assertion = Assertions.assertThat(executions).overridingErrorMessage("Expecting %s " +
           (isWaitingFor ? "to be waiting for %s, " : "NOT to be waiting for %s, ") +
           "but actually did " + (isWaitingFor ? "not " : "") + "find it to be waiting for message [%s].",
         actual, Arrays.asList(messageNames), messageName);
@@ -217,7 +217,7 @@ public class ProcessInstanceAssert extends AbstractProcessAssert<ProcessInstance
         : "NOT to have passed activities %s, ") +
       "but actually we instead we found that it passed %s. (Please make sure you have set the history " +
       "service of the engine to at least 'activity' or a higher level before making use of this assertion!)";
-    ListAssert<String> assertion = (ListAssert<String>) Assertions.assertThat(finished)
+    ListAssert<String> assertion = Assertions.assertThat(finished)
       .overridingErrorMessage(message,
         actual,
         Lists.newArrayList(activityIds),
@@ -227,15 +227,15 @@ public class ProcessInstanceAssert extends AbstractProcessAssert<ProcessInstance
       assertion.contains(activityIds);
       if (inOrder) {
         List<String> remainingFinished = finished;
-        for (int i = 0; i < activityIds.length; i++) {
+        for (String activityId : activityIds) {
           Assertions.assertThat(remainingFinished)
             .overridingErrorMessage(message,
               actual,
               Lists.newArrayList(activityIds),
               Lists.newArrayList(finished)
             )
-            .contains(activityIds[i]);
-          remainingFinished = remainingFinished.subList(remainingFinished.indexOf(activityIds[i]) + 1, remainingFinished.size());
+            .contains(activityId);
+          remainingFinished = remainingFinished.subList(remainingFinished.indexOf(activityId) + 1, remainingFinished.size());
         }
       }
     } else
@@ -271,7 +271,7 @@ public class ProcessInstanceAssert extends AbstractProcessAssert<ProcessInstance
     boolean shouldHaveSpecificVariables = names != null && names.length > 0;
 
     Map<String, Object> vars = vars();
-    StringBuffer message = new StringBuffer();
+    StringBuilder message = new StringBuilder();
     message.append("Expecting %s to hold ");
     message.append(shouldHaveVariables ? "process variables"
       + (shouldHaveSpecificVariables ? " %s, " : ", ") : "no variables at all, ");
@@ -390,8 +390,9 @@ public class ProcessInstanceAssert extends AbstractProcessAssert<ProcessInstance
    */
   public ProcessInstanceAssert isStarted() {
     Object pi = getCurrent();
-    if (pi == null)
+    if (pi == null) {
       pi = historicProcessInstanceQuery().singleResult();
+    }
     Assertions.assertThat(pi)
       .overridingErrorMessage("Expecting %s to be started, but it is not!",
         toString(actual))
@@ -576,11 +577,11 @@ public class ProcessInstanceAssert extends AbstractProcessAssert<ProcessInstance
    * - or, for finished process instances, historically - available in the
    * context of the process instance under test of this ProcessInstanceAssert.
    *
-   * @return MapAssert<String   ,       Object> inspecting the process variables.
+   * @return MapAssert<String, Object> inspecting the process variables.
    * Inspecting an empty map in case no such variables are available.
    */
   public MapAssert<String, Object> variables() {
-    return (MapAssert<String, Object>) Assertions.assertThat(vars());
+    return Assertions.assertThat(vars());
   }
 
   /* Return variables map - independent of running/historic instance status */
@@ -592,7 +593,7 @@ public class ProcessInstanceAssert extends AbstractProcessAssert<ProcessInstance
       List<HistoricVariableInstance> instances = historicVariableInstanceQuery().list();
       Map<String, Object> map = new HashMap<String, Object>();
       for (HistoricVariableInstance instance : instances) {
-        map.put(instance.getVariableName(), instance.getValue());
+        map.put(instance.getName(), instance.getValue());
       }
       return map;
     }
