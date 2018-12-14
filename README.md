@@ -27,7 +27,7 @@ recent and the Java versions (1.6, 1.7., 1.8).
 The original version is compatible with new versions, but offers no help for testing anything newer 
 than Camunda BPM 7.6. In addition, it *fixes version of AssertJ to a legacy 1.7.1* and doesn't work with 
 AssertJ 3 at all. So, we decided to **create a clone with newest version of used framework** :
- * assertj 3.11.1
+ * assertj 3.9.0
 
 Internally, we are running and testing with the following versions:
 

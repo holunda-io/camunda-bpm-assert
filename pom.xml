@@ -39,7 +39,7 @@
     <version.mockito>2.23.4</version.mockito>
     <version.powermock>2.0.0-RC.4</version.powermock>
     <version.junit>4.12</version.junit>
-    <version.assertj>3.11.1</version.assertj>
+    <version.assertj>3.9.0</version.assertj>
   </properties>
 
   <dependencyManagement>
