@@ -1,5 +1,7 @@
 # <img src="http://camunda.github.io/camunda-bpm-assert/resources/images/camunda.png" width="23" height="23"></img>&nbsp;Camunda BPM Assert
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/cc63b63361b446a980b8435dc103d6f8)](https://app.codacy.com/app/zambrovski/camunda-bpm-assert?utm_source=github.com&utm_medium=referral&utm_content=holunda-io/camunda-bpm-assert&utm_campaign=Badge_Grade_Dashboard)
+
 
 <img src="https://travis-ci.org/holunda-io/camunda-bpm-assert.svg?branch=master" align="left"/>
 <a href="https://maven-badges.herokuapp.com/maven-central/io.holunda.testing/camunda-bpm-assert"><img src="https://maven-badges.herokuapp.com/maven-central/io.holunda.testing/camunda-bpm-assert/badge.svg" align="left"/></a>
