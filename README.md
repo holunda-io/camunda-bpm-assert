@@ -50,7 +50,7 @@ So we dropped legacy support and produced a version of a well known library, in 
 <dependency>
     <groupId>io.holunda.testing</groupId>
     <artifactId>camunda-bpm-assert</artifactId>
-    <version>2.0</version>
+    <version>2.1</version>
     <scope>test</scope>
 </dependency>
 ```
