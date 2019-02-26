@@ -3,6 +3,7 @@ package org.camunda.bpm.engine.test.assertions.bpmn;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.Assertions;
 import org.camunda.bpm.engine.*;
+import org.camunda.bpm.engine.externaltask.ExternalTaskQuery;
 import org.camunda.bpm.engine.history.*;
 import org.camunda.bpm.engine.repository.CaseDefinitionQuery;
 import org.camunda.bpm.engine.repository.ProcessDefinitionQuery;
@@ -119,6 +120,8 @@ public abstract class AbstractProcessAssert<S extends AbstractProcessAssert<S, A
   protected CaseService caseService() {
     return engine.getCaseService();
   }
+
+  protected ExternalTaskService externalTaskService() { return engine.getExternalTaskService(); }
 
   /*
    * TaskQuery, unnarrowed. Narrow this to {@link ProcessInstance} (or {@link ProcessDefinition})
@@ -254,5 +257,11 @@ public abstract class AbstractProcessAssert<S extends AbstractProcessAssert<S, A
   protected HistoricCaseActivityInstanceQuery historicCaseActivityInstanceQuery() {
     return historyService().createHistoricCaseActivityInstanceQuery();
   }
+
+  /**
+   * ExternalTaskQuery, unnarrowed. Narrow this to by overriding this method in sub classes specialized to
+   * verify a specific process engine domain class.
+   */
+  protected ExternalTaskQuery externalTaskQuery() { return externalTaskService().createExternalTaskQuery(); }
 
 }

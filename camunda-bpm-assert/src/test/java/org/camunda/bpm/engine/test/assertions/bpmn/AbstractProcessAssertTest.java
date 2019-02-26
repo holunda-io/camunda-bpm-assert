@@ -2,7 +2,6 @@ package org.camunda.bpm.engine.test.assertions.bpmn;
 
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions;
-import org.camunda.bpm.engine.test.assertions.bpmn.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,14 +13,15 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * @author Martin Schimak <martin.schimak@plexiti.com>
  */
 @SuppressWarnings("unchecked")
 public class AbstractProcessAssertTest {
-  
+
   ProcessEngine processEngine;
   Class<AbstractProcessAssert> anAssertClass;
   Class anActualClass;
@@ -33,10 +33,10 @@ public class AbstractProcessAssertTest {
   public void setUp() {
     processEngine = Mockito.mock(ProcessEngine.class);
     ProcessEngineAssertions.init(processEngine);
-    allAsserts = Arrays.asList((Class<AbstractProcessAssert>[]) new Class[] {
-      JobAssert.class, 
-      ProcessDefinitionAssert.class, 
-      ProcessInstanceAssert.class, 
+    allAsserts = Arrays.asList((Class<AbstractProcessAssert>[]) new Class[]{
+      JobAssert.class,
+      ProcessDefinitionAssert.class,
+      ProcessInstanceAssert.class,
       TaskAssert.class
     }).iterator();
   }
@@ -48,23 +48,23 @@ public class AbstractProcessAssertTest {
 
   @Test
   public void testConstructorPattern() throws Exception {
-    while(allAsserts.hasNext()) {
+    while (allAsserts.hasNext()) {
       mockActual(allAsserts.next());
-      assertThat(newInstanceFromExpectedConstructor()).isNotNull();
+      assertThat((AbstractProcessAssert) newInstanceFromExpectedConstructor()).isNotNull();
     }
   }
 
   @Test
   public void testFactoryMethodPattern() throws Exception {
-    while(allAsserts.hasNext()) {
+    while (allAsserts.hasNext()) {
       mockActual(allAsserts.next());
-      assertThat(newInstanceFromExpectedFactoryMethod()).isNotNull();
+      assertThat((AbstractProcessAssert) newInstanceFromExpectedFactoryMethod()).isNotNull();
     }
   }
-  
+
   @Test
   public void testLastAssert_BeforeFirstAssert() {
-    while(allAsserts.hasNext()) {
+    while (allAsserts.hasNext()) {
       mockActual(allAsserts.next());
       assertThat(AbstractProcessAssert.getLastAssert(anAssertClass)).isNull();
     }
@@ -72,7 +72,7 @@ public class AbstractProcessAssertTest {
 
   @Test
   public void testLastAssert_AfterFirstAssert() {
-    while(allAsserts.hasNext()) {
+    while (allAsserts.hasNext()) {
       mockActual(allAsserts.next());
       AbstractProcessAssert assertInstance = newInstanceFromExpectedFactoryMethod();
       assertThat(assertInstance).isNotNull();
@@ -82,7 +82,7 @@ public class AbstractProcessAssertTest {
 
   @Test
   public void testLastAssert_AfterSecondAssert() {
-    while(allAsserts.hasNext()) {
+    while (allAsserts.hasNext()) {
       mockActual(allAsserts.next());
       AbstractProcessAssert assertInstance1 = newInstanceFromExpectedFactoryMethod();
       assertThat(assertInstance1).isNotNull();
@@ -94,7 +94,7 @@ public class AbstractProcessAssertTest {
   }
 
   private <A extends AbstractProcessAssert> A newInstanceFromExpectedConstructor() {
-    Constructor constructor = null; 
+    Constructor constructor = null;
     try {
       constructor = anAssertClass.getDeclaredConstructor(ProcessEngine.class, anActualClass);
     } catch (NoSuchMethodException e) {

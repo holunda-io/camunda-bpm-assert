@@ -1,5 +1,6 @@
 package org.camunda.bpm.engine.test.assertions.bpmn;
 
+import org.camunda.bpm.engine.externaltask.ExternalTask;
 import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
@@ -53,6 +54,16 @@ public class BpmnAwareAssertions extends AbstractAssertions {
    */
   public static TaskAssert assertThat(final Task actual) {
     return TaskAssert.assertThat(processEngine(), actual);
+  }
+
+  /**
+   * Assert that... the given ExternalTask meets your expectations.
+   *
+   * @param   actual ExternalTask under test
+   * @return  Assert object offering Task specific assertions.
+   */
+  public static ExternalTaskAssert assertThat(final ExternalTask actual) {
+    return ExternalTaskAssert.assertThat(processEngine(), actual);
   }
 
   /**

@@ -2,6 +2,8 @@ package org.camunda.bpm.engine.test.assertions.bpmn;
 
 
 import org.camunda.bpm.engine.*;
+import org.camunda.bpm.engine.externaltask.ExternalTask;
+import org.camunda.bpm.engine.externaltask.ExternalTaskQuery;
 import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.repository.ProcessDefinitionQuery;
 import org.camunda.bpm.engine.runtime.*;
@@ -10,6 +12,7 @@ import org.camunda.bpm.engine.task.TaskQuery;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.lang.String.format;
 
@@ -118,7 +121,10 @@ public class BpmnAwareTests extends BpmnAwareAssertions {
    * @return ExternalTaskService of process engine bound to this testing thread
    * @see org.camunda.bpm.engine.ExternalTaskService
    */
-  public static ExternalTaskService externalTaskService() { return processEngine().getExternalTaskService(); }
+  public static ExternalTaskService externalTaskService() {
+    return processEngine().getExternalTaskService();
+  }
+
   /**
    * Helper method to easily create a new TaskQuery
    *
@@ -127,6 +133,16 @@ public class BpmnAwareTests extends BpmnAwareAssertions {
    */
   public static TaskQuery taskQuery() {
     return taskService().createTaskQuery();
+  }
+
+  /**
+   * Helper method to easily create a new ExternalTaskQuery
+   *
+   * @return new ExternalTaskQuery for process engine bound to this testing thread
+   * @see org.camunda.bpm.engine.externaltask.ExternalTaskQuery
+   */
+  public static ExternalTaskQuery externalTaskQuery() {
+    return externalTaskService().createExternalTaskQuery();
   }
 
   /**
@@ -216,6 +232,38 @@ public class BpmnAwareTests extends BpmnAwareAssertions {
   }
 
   /**
+   * Helper method to easily access the only external task currently
+   * available in the context of the last asserted process
+   * instance.
+   *
+   * @return the only external task of the last asserted process
+   * instance. May return null if no such task exists.
+   * @throws java.lang.IllegalStateException in case more
+   *                                         than one task is delivered by the underlying
+   *                                         query or in case no process instance was asserted
+   *                                         yet.
+   */
+  public static ExternalTask externalTask() {
+    return externalTask(externalTaskQuery());
+  }
+
+  /**
+   * Helper method to easily access the only external task currently
+   * available in the context of the last asserted process
+   * instance.
+   *
+   * @return the only external task of the last asserted process
+   * instance. May return null if no such task exists.
+   * @throws java.lang.IllegalStateException in case more
+   *                                         than one task is delivered by the underlying
+   *                                         query or in case no process instance was asserted
+   *                                         yet.
+   */
+  public static ExternalTask externalTask(String activityId) {
+    return externalTask(externalTaskQuery().activityId(activityId));
+  }
+
+  /**
    * Helper method to easily access the only task currently
    * available in the context of the given process instance.
    *
@@ -229,6 +277,22 @@ public class BpmnAwareTests extends BpmnAwareAssertions {
    */
   public static Task task(ProcessInstance processInstance) {
     return task(taskQuery(), processInstance);
+  }
+
+  /**
+   * Helper method to easily access the only external task currently
+   * available in the context of the given process instance.
+   *
+   * @param processInstance the process instance for which
+   *                        an external task should be retrieved.
+   * @return the only task of the process instance. May
+   * return null if no such task exists.
+   * @throws java.lang.IllegalStateException in case more
+   *                                         than one task is delivered by the underlying
+   *                                         query.
+   */
+  public static ExternalTask externalTask(ProcessInstance processInstance) {
+    return externalTask(externalTaskQuery(), processInstance);
   }
 
   /**
@@ -249,6 +313,27 @@ public class BpmnAwareTests extends BpmnAwareAssertions {
     assertThat(taskDefinitionKey).isNotNull();
     return task(taskQuery().taskDefinitionKey(taskDefinitionKey));
   }
+
+  /**
+   * Helper method to easily access the only external task with the
+   * given taskDefinitionKey currently available in the context
+   * of the given process instance.
+   *
+   * @param activityId the key of the external task that should
+   *                          be retrieved.
+   * @param processInstance   the process instance for which
+   *                          a task should be retrieved.
+   * @return the only external task of the given process instance. May
+   * return null if no such task exists.
+   * @throws java.lang.IllegalStateException in case more
+   *                                         than one task is delivered by the underlying
+   *                                         query.
+   */
+  public static ExternalTask externalTask(String activityId, ProcessInstance processInstance) {
+    assertThat(activityId).isNotNull();
+    return externalTask(externalTaskQuery().activityId(activityId), processInstance);
+  }
+
 
   /**
    * Helper method to easily access the only task with the
@@ -294,6 +379,51 @@ public class BpmnAwareTests extends BpmnAwareAssertions {
           "e.g. assertThat(processInstance)... !"
       );
     return task(taskQuery, lastAssert.getActual());
+  }
+
+  /**
+   * Helper method to easily access the only external task compliant to
+   * a given externalTaskQuery and currently available in the context
+   * of the last asserted process instance.
+   *
+   * @param externalTaskQuery the query with which the external task should
+   *                          be retrieved. This query will be further narrowed
+   *                          to the last asserted process instance.
+   * @return the only external task of the last asserted process instance
+   * and compliant to the given query. May return null
+   * in case no such task exists.
+   * @throws java.lang.IllegalStateException in case more than one external task is delivered by the underlying
+   *                                         query or in case no process instance was asserted
+   *                                         yet.
+   */
+  public static ExternalTask externalTask(ExternalTaskQuery externalTaskQuery) {
+    ProcessInstanceAssert lastAssert = AbstractProcessAssert.getLastAssert(ProcessInstanceAssert.class);
+    if (lastAssert == null)
+      throw new IllegalStateException(
+        "Call a process instance assertion first - " +
+          "e.g. assertThat(processInstance)... !"
+      );
+    return externalTask(externalTaskQuery, lastAssert.getActual());
+  }
+
+  /**
+   * Helper method to easily access the only external task compliant to
+   * a given externalTaskQuery and currently available in the context
+   * of the given process instance.
+   *
+   * @param externalTaskQuery the query with which the external task should
+   *                          be retrieved. This query will be further narrowed
+   *                          to the given process instance.
+   * @param processInstance   the process instance for which
+   *                          a task should be retrieved.
+   * @return the only task of the given process instance and
+   * compliant to the given query. May return null in
+   * case no such task exists.
+   * @throws java.lang.IllegalStateException in case more than one external task is delivered by the underlying
+   *                                         query.
+   */
+  public static ExternalTask externalTask(ExternalTaskQuery externalTaskQuery, ProcessInstance processInstance) {
+    return assertThat(processInstance).isNotNull().externalTask(externalTaskQuery).getActual();
   }
 
   /**
@@ -676,8 +806,51 @@ public class BpmnAwareTests extends BpmnAwareAssertions {
    */
   public static void complete(Task task) {
     if (task == null)
-      throw new IllegalArgumentException(format("Illegal call of claim(task = '%s') - must not be null!", task));
+      throw new IllegalArgumentException(format("Illegal call of complete(task = '%s') - must not be null!", task));
     taskService().complete(task.getId());
+  }
+
+  /**
+   * Helper method to easily complete an externalTask.
+   *
+   * @param externalTask External task to be completed
+   */
+  public static void complete(ExternalTask externalTask) {
+    complete(externalTask, "anonymousWorker");
+  }
+
+  /**
+   * Helper method to easily complete an externalTask.
+   *
+   * @param externalTask External task to be completed
+   */
+  public static void complete(ExternalTask externalTask, String workerId) {
+    if (externalTask == null) {
+      throw new IllegalArgumentException(format("Illegal call of complete(externalTask = 'null', workerId = '%s') - must not be null!", workerId));
+    }
+    externalTaskService().fetchAndLock(1, workerId).topic(externalTask.getTopicName(), 30L * 1000L).execute();
+    externalTaskService().complete(externalTask.getId(), workerId);
+  }
+
+  /**
+   * Helper method to easily complete an externalTask.
+   *
+   * @param externalTask External task to be completed
+   */
+  public static void complete(ExternalTask externalTask, Map<String, Object> variables) {
+    complete(externalTask, "anonymousWorker", variables);
+  }
+
+  /**
+   * Helper method to easily complete an externalTask.
+   *
+   * @param externalTask External task to be completed
+   */
+  public static void complete(ExternalTask externalTask, String workerId, Map<String, Object> variables) {
+    Objects.requireNonNull(externalTask, "Illegal call of complete() - externalTask must not be null!");
+
+    externalTaskService().fetchAndLock(1, workerId).topic(externalTask.getTopicName(), 30L * 1000L).execute();
+    externalTaskService().complete(externalTask.getId(), workerId, variables);
   }
 
   /**
