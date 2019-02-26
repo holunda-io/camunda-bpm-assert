@@ -114,7 +114,7 @@ public class ProcessInstanceAssertIsWaitingAtTest extends ProcessAssertTestCase 
       @Override
       public void when() {
         //noinspection NullArgumentToVariableArgMethod
-        assertThat(processInstance).isWaitingAt(null);
+        assertThat(processInstance).isWaitingAt((String[])null);
       }
     });
     // And

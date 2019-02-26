@@ -119,7 +119,7 @@ public class ProcessInstanceAssertIsWaitingAtExactlyTest extends ProcessAssertTe
       @Override
       public void when() {
         //noinspection NullArgumentToVariableArgMethod
-        assertThat(processInstance).isWaitingAtExactly(null);
+        assertThat(processInstance).isWaitingAtExactly((String[])null);
       }
     });
     // And
